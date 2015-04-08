@@ -1,6 +1,7 @@
 package nyc.c4q.ac21.weatherclock;
 /**
  * Created by c4q-john on 4/7/15.
+ * Class houses string animation for the alarm segment of the clock.
  */
 public class eye
 {

@@ -6,9 +6,11 @@ import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Calendar;
@@ -37,7 +39,7 @@ public class Main {
     /**
      * SAMPLE CODE: Displays a very primitive clock.
      */
-    public static void main(String[] args) throws IOException, ParseException
+    public static void main(String[] args) throws IOException, ParseException, InterruptedException
     {
 
 
@@ -122,7 +124,7 @@ public class Main {
             // Get the current date and time.
             Calendar cal = Calendar.getInstance();
 
-
+            //Sets off alarm if user input equal cal output.
             if(cal.get(Calendar.HOUR)==alarmHour&& cal.get(Calendar.MINUTE) == alarmMinute){
                 eyeAnimation(terminal,5);
             }
@@ -236,7 +238,9 @@ public class Main {
             DateTime.pause(1.0);
         }
     }
-    public static void eyeAnimation(AnsiTerminal terminal,int frames){
+    //Written by John with a lot of help from Ramona.
+    public static void eyeAnimation(AnsiTerminal terminal,int frames) throws IOException, InterruptedException
+    {
 
         terminal.clear();
 
@@ -256,6 +260,38 @@ public class Main {
             DateTime.pause(0.3);
 
             frames--;
+
+            //calls upon the terminal to read a string once the alarm goes off.
+            //Written by Ramona. Random function by John.
+            terminal.setTextColor(AnsiTerminal.Color.GREEN, false);
+            terminal.moveTo(1, 1);
+
+            int jokeLength = alarmPhrases.badJokes.length;
+            int voiceLength = alarmPhrases.voice.length;
+
+            int randBadJoke = (int)(Math.random()*jokeLength);
+            int randVoice = (int)(Math.random()*voiceLength);
+
+            String command = "say --voice="+
+                    alarmPhrases.voice[randVoice]+" "+
+                    alarmPhrases.badJokes[randBadJoke];
+
+
+            Process proc = Runtime.getRuntime().exec(command);
+
+            // Read the output
+
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(proc.getInputStream()));
+
+            String line = "";
+            while((line = reader.readLine()) != null) {
+                System.out.print(line + "\n");
+            }
+
+            proc.waitFor();
+
+            terminal.clear();
 
 
         }
