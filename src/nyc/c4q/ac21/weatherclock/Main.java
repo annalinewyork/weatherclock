@@ -13,6 +13,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class Main {
 
@@ -67,9 +68,14 @@ public class Main {
         //current weather.
         String currWeather = (String)weatherJsonObj.get("description");
 
+        //sets up alarm.
+        System.out.println("Set your alarm: HH:MM");
+        Scanner scanner = new Scanner(System.in);
 
+        String alarm = scanner.next();
 
-
+        int alarmHour = Integer.valueOf(alarm.substring(0,2));
+        int alarmMinute = Integer.valueOf(alarm.substring(3,5));
 
 
 
@@ -104,6 +110,9 @@ public class Main {
 
         int xPosition = 1 + numCols / 2 - 5;
         while (true) {
+
+
+
             //Set the City name.
             terminal.setTextColor(AnsiTerminal.Color.CYAN);
             terminal.moveTo(19,xPosition-50);
@@ -112,6 +121,11 @@ public class Main {
 
             // Get the current date and time.
             Calendar cal = Calendar.getInstance();
+
+
+            if(cal.get(Calendar.HOUR)==alarmHour&& cal.get(Calendar.MINUTE) == alarmMinute){
+                eyeAnimation(terminal,5);
+            }
 
             // Write the day of the week in green on a blue background.
             String dayOfWeek = DateTime.getDayOfWeekNames().get(cal.get(Calendar.DAY_OF_WEEK));
@@ -218,16 +232,34 @@ public class Main {
 
 
 
-
-
-
-
-
-
-
-
             // Pause for one second, and do it again.
             DateTime.pause(1.0);
         }
+    }
+    public static void eyeAnimation(AnsiTerminal terminal,int frames){
+
+        terminal.clear();
+
+        while(frames > 0){
+
+            terminal.setTextColor(AnsiTerminal.Color.CYAN);
+            terminal.moveTo(15,0);
+            terminal.write(eye.eyeClosed);
+            DateTime.pause(0.3);
+            terminal.setTextColor(AnsiTerminal.Color.CYAN);
+            terminal.moveTo(15,0);
+            terminal.write(eye.eyeSemi);
+            DateTime.pause(0.3);
+            terminal.setTextColor(AnsiTerminal.Color.CYAN);
+            terminal.moveTo(15,0);
+            terminal.write(eye.eyeOpen);
+            DateTime.pause(0.3);
+
+            frames--;
+
+
+        }
+
+
     }
 }
