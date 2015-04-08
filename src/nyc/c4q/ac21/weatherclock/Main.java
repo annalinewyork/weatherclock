@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class Main {
 
@@ -37,10 +38,6 @@ public class Main {
      */
     public static void main(String[] args) throws IOException, ParseException
     {
-        //Url to get the weather api. as it stands it throws an exception error because it's receiving
-        //a string.
-//        URL url = new URL("http://api.openweathermap.org/data/2.5/weather?q=New%20York,NY");
-//        String weatherInfo = HTTP.get(url);
 
 
         URL url = new URL("http://api.openweathermap.org/data/2.5/weather?q=New%20York,NY");
@@ -49,19 +46,25 @@ public class Main {
 
         JSONObject jsonweatherobj = (JSONObject) JSONValue.parse(info);
 
-        //city
+        //Gets the city name
         String cityName = (String)jsonweatherobj.get("name");
 
+        //calls the map main in the API to get values within it.
         JSONObject tempJSONObj = (JSONObject)jsonweatherobj.get("main");
+        //calls temp,pressure, and humidity from "main".
         Double temp = (Double)tempJSONObj.get("temp");
         Double pressure = (Double)tempJSONObj.get("pressure");
         Long humid = (Long)tempJSONObj.get("humidity");
-
+        //calls the map sys in the API to get values within it.
         JSONObject sunrise = (JSONObject)jsonweatherobj.get("sys");
+        //calls sunrise time from "sys".
         Long sunrsTime = (Long)sunrise.get("sunrise");
-
+        //calls the array "weather, to gain values within it.
         JSONArray weathr = (JSONArray)jsonweatherobj.get("weather");
+        //calls object at index 0.
         JSONObject weatherJsonObj =(JSONObject)weathr.get(0);
+        //calls "description" within that object, which the api tells us is the
+        //current weather.
         String currWeather = (String)weatherJsonObj.get("description");
 
 
@@ -198,6 +201,18 @@ public class Main {
                 terminal.write("Daylights Saving: yes");
             }else{
                 terminal.write("Daylights Saving: No");
+            }
+
+
+            // 3. Show whether this is a national holiday, and if so, which.
+            HashMap<Calendar, String> holidays = Holidays.getHolidays("National holiday");
+            terminal.setTextColor(AnsiTerminal.Color.WHITE);
+            terminal.moveTo(15,xPosition);
+
+            if (holidays.get(date)==null){
+                terminal.write("National Holiday:  None");
+            }else {
+                terminal.write("National Holiday:  " + holidays.get(date));
             }
 
 
