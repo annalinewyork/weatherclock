@@ -1,7 +1,11 @@
 <component name="libraryTable">
   <library name="json-simple-1.1.1">
     <CLASSES>
+<<<<<<< HEAD
       <root url="jar://$PROJECT_DIR$/jars/json-simple-1.1.1.jar!/" />
+=======
+      <root url="jar://$PROJECT_DIR$/jar/json-simple-1.1.1.jar!/" />
+>>>>>>> 1e5be2d7bceea03c4e7470bcd773aaf6f5666a5d
     </CLASSES>
     <JAVADOC />
     <SOURCES />
