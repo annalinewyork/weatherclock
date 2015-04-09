@@ -17,6 +17,142 @@ import java.util.HashMap;
 public class Main {
 
     /**
+     * Gets wind speed and displays it
+     */
+
+    public static void displayWind(int x, int y, JSONObject weatherData, AnsiTerminal terminal){
+
+        String windDirection = "No Speed Data";
+
+        terminal.setTextColor(AnsiTerminal.Color.GREEN);
+        terminal.setBackgroundColor(AnsiTerminal.Color.BLUE);
+
+        JSONObject windData = (JSONObject) weatherData.get("wind");
+        Double speed = (Double) windData.get("speed");
+        Double degrees = (Double) windData.get("deg");
+
+        if(speed == null || degrees == null || windData == null){
+            terminal.write(windDirection);
+            return;
+        }
+
+
+
+        for(int i = 0; i < WindASCII.letterW.length; i++){
+            terminal.moveTo(y+1+i, x);
+            terminal.write(WindASCII.letterW[i] + "  " +  WindASCII.letterI[i] + "  " +  WindASCII.letterN[i] + "  " +  WindASCII.letterD[i]);
+        }
+
+
+        //         Cardinal Direction
+        //    	   Degree Direction
+
+        //         N
+        //         348.75 - 11.25
+        if((degrees > 348.75 && degrees <= 360) || (degrees >= 0 && degrees < 11.25)){
+            windDirection = "N";
+        }
+
+        //         NNW
+        //         326.25 - 348.75
+        if((degrees > 326.25 && degrees <= 348.75)){
+            windDirection = "NNW";
+        }
+
+        //         NW
+        //         303.75 - 326.25
+        if((degrees > 303.75 && degrees <= 326.25)){
+            windDirection = "NW";
+        }
+
+        //         WNW
+        //         281.25 - 303.75
+        if((degrees > 281.25 && degrees <= 303.75)){
+            windDirection = "WNW";
+        }
+
+        //         W
+        //         258.75 - 281.25
+        if((degrees > 258.75 && degrees <= 281.25)){
+            windDirection = "W";
+        }
+
+        //         WSW
+        //         236.25 - 258.75
+        if((degrees > 236.25 && degrees <= 258.75)){
+            windDirection = "WSW";
+        }
+
+        //         SW
+        //         213.75 - 236.25
+        if((degrees > 213.75 && degrees <= 236.75)){
+            windDirection = "SW";
+        }
+
+        //         SSW
+        //         191.25 - 213.75
+        if((degrees > 191.25 && degrees <= 213.75)){
+            windDirection = "SSW";
+        }
+
+        //         S
+        //         168.75 - 191.25
+        if((degrees > 168.75 && degrees <= 191.25)){
+            windDirection = "S";
+        }
+
+        //         ENE
+        //         56.25 - 78.75
+        if((degrees > 56.25 && degrees <= 78.75)){
+            windDirection = "ENE";
+        }
+
+        //         SSE
+        //         146.25 - 168.75
+        if((degrees > 146.25 && degrees <= 168.75)){
+            windDirection = "SSE";
+        }
+
+        //         SE
+        //         123.75 - 146.25
+        if((degrees > 123.75 && degrees <= 146.25)){
+            windDirection = "SE";
+        }
+
+        //         ESE
+        //         101.25 - 123.75
+        if((degrees > 101.25 && degrees <= 123.75)){
+            windDirection = "ESE";
+        }
+
+        //         E
+        //         78.75 - 101.25
+        if((degrees > 78.75 && degrees <= 101.25)){
+            windDirection = "E";
+        }
+
+        //         NE
+        //         33.75 - 56.25
+        if((degrees > 33.75 && degrees <= 56.25)){
+            windDirection = "NE";
+        }
+
+        //         NNE
+        //         11.25 - 33.75
+        if((degrees > 11.25 && degrees <= 33.75)){
+            windDirection = "NE";
+        }
+
+        terminal.moveTo(y+6, x);
+        terminal.write("Wind Direction: " + windDirection);
+
+        terminal.moveTo(y+7, x);
+        terminal.write("Wind Speed: " + Double.toString(speed) + " MPS");
+
+    }
+
+
+    /**
      * SAMPLE CODE: Returns sunset time for the current day.
      */
     public static Calendar getSunset() {
@@ -66,11 +202,6 @@ public class Main {
         //calls "description" within that object, which the api tells us is the
         //current weather.
         String currWeather = (String)weatherJsonObj.get("description");
-
-
-
-
-
 
 
 
@@ -138,8 +269,6 @@ public class Main {
             terminal.moveTo(4, xPosition);
             terminal.write("Date: "+date);
 
-
-
             // Set the background color back to black.
             terminal.setBackgroundColor(AnsiTerminal.Color.BLACK);
 
@@ -173,8 +302,6 @@ public class Main {
             terminal.setTextColor(AnsiTerminal.Color.MAGENTA);
             terminal.moveTo(10,xPosition);
             terminal.write("Humidity: "+humid+" %");
-
-
 
 
             //sunrise time
@@ -217,17 +344,12 @@ public class Main {
 
 
 
+            // display wind information
 
-
-
-
-
-
-
-
+            displayWind(numCols - 30,1,jsonweatherobj, terminal);
 
             // Pause for one second, and do it again.
-            DateTime.pause(1.0);
+            DateTime.pause(0.25);
         }
     }
 }

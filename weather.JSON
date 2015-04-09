@@ -1,0 +1,44 @@
+{
+  coord: {
+    lon: -74.01,
+    lat: 40.71
+  },
+  sys: {
+    message: 0.0208,
+    country: "United States of America",
+    sunrise: 1428402537,
+    sunset: 1428449228
+  },
+  weather: [
+    {
+      id: 500,
+      main: "Rain",
+      description: "light rain",
+      icon: "10d"
+    }
+  ],
+  base: "stations",
+  main: {
+    temp: 287.217,
+    temp_min: 287.217,
+    temp_max: 287.217,
+    pressure: 1030.97,
+    sea_level: 1035.08,
+    grnd_level: 1030.97,
+    humidity: 81
+  },
+  wind: {
+    speed: 2.25,
+    deg: 81.5023
+  },
+  clouds: {
+    all: 92
+  },
+  rain: {
+    3h: 0.755
+  },
+  dt: 1428437084,
+  id: 5128581,
+  name: "New York",
+  cod: 200
+}
