@@ -17,7 +17,6 @@ public class alarmPhrases
             "That last joke was terrible. Wake up already.",
             "If you want to catch a squirrel just climb a tree and act like a nut.",
             "How does NASA organize their company parties? They planet. HEHEHE",
-
             "What do you call dangerous precipitation? A rain of terror.",
             "Two fish are in a tank. One turns to the other and asks, How do you drive this thing?",
             "I wondered why the baseball was getting bigger. Then it hit me.",
