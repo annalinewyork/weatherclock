@@ -19,7 +19,8 @@ public class Main
     public  static  String info;
 
     /**
-     * Gets wind speed and displays it
+     * displayWind method gets wind speed and displays it
+     * Written by Anthony Fermin
      */
 
     public static void displayWind(int x, int y, JSONObject weatherData, AnsiTerminal terminal){
@@ -30,14 +31,19 @@ public class Main
         terminal.setBackgroundColor(AnsiTerminal.Color.BLUE);
 
         JSONObject windData = (JSONObject) weatherData.get("wind");
+
+        // windData returns speed in meters per second, converting to Miles per hour
         Double speed = (Double) windData.get("speed");
+        // 1 Meter per Second = 2.2369362920544 Miles per Hour
+        speed = speed * 2.2369362920544;
+        DecimalFormat formatSpeed = new DecimalFormat("##.#");
+
         Double degrees = (Double) windData.get("deg");
 
         if(speed == null || degrees == null || windData == null){
             terminal.write(windDirection);
             return;
         }
-
 
 
         for(int i = 0; i < WindASCII.letterW.length; i++){
@@ -149,7 +155,7 @@ public class Main
         terminal.write("Wind Direction: " + windDirection);
 
         terminal.moveTo(y+7, x);
-        terminal.write("Wind Speed: " + Double.toString(speed) + " MPS");
+        terminal.write("Wind Speed: " + formatSpeed.format(speed) + " MPH");
 
     }
 
@@ -286,12 +292,10 @@ public class Main
         while(true)
         {
 
-
             //Set the City name.
             terminal.setTextColor(AnsiTerminal.Color.CYAN);
             terminal.moveTo(19, xPosition - 50);
             terminal.write("City: " + cityName);
-
 
             // Get the current date and time.
             Calendar cal = Calendar.getInstance();
@@ -606,7 +610,6 @@ public class Main
 
             terminal.clear();
 
-            
         }
 
 

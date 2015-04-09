@@ -8,7 +8,7 @@ public class WindASCII
     public static String[] letterW =
             {"●   ●",
              "● ● ●",
-             "●◗ ◖●",
+             "●● ●●",
              "●   ●"};
     public static String[] letterI =
             {"●",
@@ -18,14 +18,14 @@ public class WindASCII
 
     public static String[] letterN =
             {"●  ●",
-             "●◗ ●",
-             "● ◖●",
+             "●● ●",
+             "● ●●",
              "●  ●"};
 
     public static String[] letterD =
-            {"●●◗",
-             "●  ◗",
-             "●  ◗",
-             "●●◗"};
+            {"●●●",
+             "●  ●",
+             "●  ●",
+             "●●●"};
 
 }
