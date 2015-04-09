@@ -227,6 +227,9 @@ public class Main {
                 terminal.write("National Holiday:  " + holidays.get(date));
             }
 
+            //Display current weather pic.
+            int sec = cal.get(Calendar.SECOND);
+            WeatherDisplay.weather(10, 1, jsonweatherobj,terminal,sec);
 
 
 
