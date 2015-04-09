@@ -1,5 +1,6 @@
 package nyc.c4q.ac21.weatherclock;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class CalendarPrinter
@@ -24,14 +25,17 @@ public class CalendarPrinter
      * @param date
      *   The date containing the month to print.
      */
-    public static void printMonthCalendar(Calendar date) {
+    public static void printMonthCalendar(int x, int y,Calendar date, AnsiTerminal terminal) {
+        ArrayList<String> lines = new ArrayList<String>();
+        String line = "";
+
         // Extract year, month, and day for our date.
         int year = date.get(Calendar.YEAR);
         int month = date.get(Calendar.MONTH);
         int day = date.get(Calendar.DAY_OF_MONTH);
 
         // First, show the month name and year.
-        System.out.println(DateTime.getMonthNames().get(month) + " " + year);
+        lines.add(DateTime.getMonthNames().get(month) + " " + year);
 
         // Start the calendar on the first day of the month.
         Calendar cal = Calendar.getInstance();
@@ -42,7 +46,7 @@ public class CalendarPrinter
         int indent = cal.get(Calendar.DAY_OF_WEEK) - Calendar.SUNDAY;
         for (int i = 0; i < indent; ++i)
             // We use four spaces for each day, below.
-            System.out.print("    ");
+            line += "    ";
 
         // Now print each day of the month.  Keep going until we hit the next month.
         while (cal.get(Calendar.YEAR) == year && cal.get(Calendar.MONTH) == month) {
@@ -50,27 +54,38 @@ public class CalendarPrinter
             // two characters.
             int d = cal.get(Calendar.DAY_OF_MONTH);
             if (d < 10)
-                System.out.print(' ');
-            System.out.print(d);
+                line += ' ';
+            line +=d;
 
             if (d == day)
                 // Today!  Mark the day.
-                System.out.print('*');
+                line +='*';
             else
                 // Not today; leave some space.
-                System.out.print(' ');
+                line+=' ';
 
             if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
+            {
                 // Saturday: move on to the next line for the next date.
-                System.out.println();
+                lines.add(line);
+                line = "";
+            }
             else
                 // Other days: just leave an extra space.
-                System.out.print(' ');
+                line +=' ';
 
             // On to the next day.
             cal = DateTime.getNextDay(cal);
         }
-        System.out.println();
+
+        lines.add(line);
+        for(int i = 0; i < lines.size(); i++){
+
+            terminal.moveTo(y+i,x);
+            terminal.write(lines.get(i));
+
+        }
+
     }
 
 }

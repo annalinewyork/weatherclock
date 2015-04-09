@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -23,9 +24,15 @@ public class Main
      * Written by Anthony Fermin
      */
 
-    public static void displayWind(int x, int y, JSONObject weatherData, AnsiTerminal terminal){
+    public static void displayWind(int x, int y, JSONObject weatherData, AnsiTerminal terminal, int secs)
+    {
 
         String windDirection = "No Speed Data";
+        ArrayList<String[]> wind = new ArrayList<String[]>();
+        wind.add(WindASCII.letterW);
+        wind.add(WindASCII.letterI);
+        wind.add(WindASCII.letterN);
+        wind.add(WindASCII.letterD);
 
         terminal.setTextColor(AnsiTerminal.Color.GREEN);
         terminal.setBackgroundColor(AnsiTerminal.Color.BLUE);
@@ -40,17 +47,49 @@ public class Main
 
         Double degrees = (Double) windData.get("deg");
 
-        if(speed == null || degrees == null || windData == null){
+        if(speed == null || degrees == null || windData == null)
+        {
             terminal.write(windDirection);
             return;
         }
 
+        // clears any previous wind animation
+        for(int i = 0; i < WindASCII.letterW.length + 2; i++)
+        {
+            terminal.setBackgroundColor(AnsiTerminal.Color.BLACK);
+            terminal.moveTo(y + i, x);
+            terminal.write("                         ");
+        }
+        terminal.setBackgroundColor(AnsiTerminal.Color.BLUE);
 
-        for(int i = 0; i < WindASCII.letterW.length; i++){
-            terminal.moveTo(y+1+i, x);
-            terminal.write(WindASCII.letterW[i] + "  " +  WindASCII.letterI[i] + "  " +  WindASCII.letterN[i] + "  " +  WindASCII.letterD[i]);
+        int offset;
+
+        if(secs % 2 == 0){
+            offset = 1;
+        }else{
+            offset = -1;
         }
 
+        int letterWidth = 6;
+
+        for(int i = 0; i < wind.size(); i++){
+            String[] letter = wind.get(i);
+            if(offset == 1)
+            {
+                offset = 0;
+            }else{
+                offset = 1;
+            }
+
+
+            for(int j = 0; j < letter.length; j++){
+
+                terminal.moveTo(y+1+j + offset, x + (i * letterWidth));
+                terminal.write(letter[j]);
+
+            }
+
+        }
 
         //         Cardinal Direction
         //    	   Degree Direction
@@ -300,6 +339,7 @@ public class Main
             // Get the current date and time.
             Calendar cal = Calendar.getInstance();
 
+
             //Sets off alarm if user input equal cal output.
             if(cal.get(Calendar.HOUR) == alarmHour && cal.get(Calendar.MINUTE) == alarmMinute)
             {
@@ -425,7 +465,10 @@ public class Main
 
 
             // display wind information
-            displayWind(numCols - 30,1,jsonweatherobj, terminal);
+            displayWind(numCols - 25,1,jsonweatherobj, terminal, sec);
+
+            // display calendar
+            CalendarPrinter.printMonthCalendar(numCols - 35, numRows - 10, cal, terminal);
 
             // graphical representation of day/night
             if(daytime(cal))
