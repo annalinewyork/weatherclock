@@ -72,22 +72,22 @@ public class Main
 
         int letterWidth = 6;
 
-        for(int i = 0; i < wind.size(); i++){
-            String[] letter = wind.get(i);
-            if(offset == 1)
-            {
-                offset = 0;
-            }else{
-                offset = 1;
-            }
+                   for(int i = 0; i < wind.size(); i++){
+                String[] letter = wind.get(i);
+                if(offset == 1)
+                {
+                    offset = 0;
+                }else{
+                    offset = 1;
+                }
 
 
-            for(int j = 0; j < letter.length; j++){
+                for(int j = 0; j < letter.length; j++){
 
-                terminal.moveTo(y+1+j + offset, x + (i * letterWidth));
-                terminal.write(letter[j]);
+                    terminal.moveTo(y+1+j + offset, x + (i * letterWidth));
+                    terminal.write(letter[j]);
 
-            }
+                }
 
         }
 
@@ -256,7 +256,7 @@ public class Main
     {
 
 
-        URL url = new URL("http://api.openweathermap.org/data/2.5/weather?q=New%20York,NY");
+        URL url = new URL("http://api.openweathermap.org/data/2.5/weather?q=New%20York");
 
         Main.info = HTTP.get(url);
 
@@ -324,6 +324,7 @@ public class Main
 
         // Get sunset time for the current day.
         Calendar sunset = getSunset();
+        Calendar sunrise1 = getSunrise();
 
         int xPosition = 1 + numCols / 2 - 5;
 
@@ -333,7 +334,7 @@ public class Main
 
             //Set the City name.
             terminal.setTextColor(AnsiTerminal.Color.CYAN);
-            terminal.moveTo(19, xPosition - 50);
+            terminal.moveTo(19, xPosition);
             terminal.write("City: " + cityName);
 
             // Get the current date and time.
@@ -350,7 +351,7 @@ public class Main
             String dayOfWeek = DateTime.getDayOfWeekNames().get(cal.get(Calendar.DAY_OF_WEEK));
             terminal.setTextColor(AnsiTerminal.Color.CYAN);
             terminal.setBackgroundColor(AnsiTerminal.Color.BLACK);
-            terminal.moveTo(21, xPosition - 50);
+            terminal.moveTo(21, xPosition);
             terminal.write("Day : " + dayOfWeek + "  ");
 
 
@@ -366,7 +367,7 @@ public class Main
             }
             terminal.setTextColor(AnsiTerminal.Color.WHITE);
             terminal.setBackgroundColor(AnsiTerminal.Color.BLACK);
-            terminal.moveTo(20, xPosition - 50);
+            terminal.moveTo(20, xPosition);
             terminal.write("Time: " + time);
 
 
@@ -431,7 +432,7 @@ public class Main
 
 
             //Daylights
-            terminal.setTextColor(AnsiTerminal.Color.BLUE);
+            terminal.setTextColor(AnsiTerminal.Color.RED);
             terminal.moveTo(14, xPosition);
             boolean isDST = DST.isDST(cal);
             if(isDST)
@@ -468,23 +469,21 @@ public class Main
             displayWind(numCols - 25,1,jsonweatherobj, terminal, sec);
 
             // display calendar
-            CalendarPrinter.printMonthCalendar(numCols - 35, numRows - 10, cal, terminal);
+            CalendarPrinter.printMonthCalendar(numCols - 35, numRows - 25, cal, terminal);
 
             // graphical representation of day/night
-            if(daytime(cal))
-            {
+            terminal.setBackgroundColor(AnsiTerminal.Color.BLACK);
+            if (daytime(cal, sunrise1, sunset)) {
                 terminal.setTextColor(AnsiTerminal.Color.YELLOW);
-            }
-            else
-            {
+            } else {
                 terminal.setTextColor(AnsiTerminal.Color.CYAN);
-
-                // draws digital clock display
-                terminal.moveTo(numRows - 12, 0);
-                terminal.write(buildClock(cal));
-                terminal.moveTo(numRows - 1, 57);
-                terminal.write(amPm(cal));
             }
+
+            // draws digital clock display
+            terminal.moveTo(numRows - 12, 0);
+            terminal.write(buildClock(cal));
+            terminal.moveTo(numRows - 1, 57);
+            terminal.write(amPm(cal));
 
 
             // Pause for one second, and do it again.
@@ -492,31 +491,25 @@ public class Main
         }
     }
 
-    public static String buildClock(Calendar cal)
-    {
+    public static String buildClock(Calendar cal) {
+
         String[] digits = {DigitalClock.zero, DigitalClock.uno, DigitalClock.two, DigitalClock.three, DigitalClock.four, DigitalClock.five, DigitalClock.six, DigitalClock.seven, DigitalClock.eight, DigitalClock.nine};
         String clock;
 
         int hour = cal.get(cal.HOUR);
         int minute = cal.get(cal.MINUTE);
 
-        if(hour == 0)
-        {
-            clock = concatenate(digits[1], digits[2], DigitalClock.colon, digits[minute / 10],
-                                digits[minute % 10]);
+        if (hour == 0) {
+            clock = concatenate(digits[1], digits[2], DigitalClock.colon, digits[minute/10], digits[minute%10]);
+        } else if (hour == 11) {
+            clock = concatenate(digits[1], digits[1], DigitalClock.colon, digits[minute/10], digits[minute%10]);
+        } else if (hour == 10) {
+            clock = concatenate(digits[1], digits[0], DigitalClock.colon, digits[minute / 10], digits[minute % 10]);
+        } else {
+            clock = concatenate(DigitalClock.spacer, digits[hour], DigitalClock.colon, digits[minute/10], digits[minute%10]);
         }
-        else if(hour == 11)
-        {
-            clock = concatenate(digits[1], digits[1], DigitalClock.colon, digits[minute / 10],
-                                digits[minute % 10]);
-        }
-        else
-        {
-            clock = concatenate(DigitalClock.spacer, digits[hour], DigitalClock.colon,
-                                digits[minute / 10], digits[minute % 10]);
-        }
-        return clock;
 
+        return clock;
     }
 
     /*
@@ -551,36 +544,19 @@ public class Main
     /*
     * Uses sunrise and sunset times to determine whether it's daytime
     */
-    public static boolean daytime(Calendar cal)
-    {
-        Calendar sunrise = getSunrise();
-        Calendar sunset = getSunset();
-        if(sunrise == null || sunset == null)
-        {
-            return false;
-        }
+    public static boolean daytime(Calendar cal, Calendar sunrise, Calendar sunset) {
+
         boolean isDaytime;
 
-        if(sunrise.get(Calendar.HOUR_OF_DAY) < cal.get(Calendar.HOUR_OF_DAY) && sunset
-                .get(Calendar.HOUR_OF_DAY) > cal.get(Calendar.HOUR_OF_DAY))
-        {
+        if(sunrise.get(Calendar.HOUR_OF_DAY) < cal.get(Calendar.HOUR_OF_DAY) && sunset.get(Calendar.HOUR_OF_DAY) > cal.get(Calendar.HOUR_OF_DAY)) {
             isDaytime = true;
-        }
-        else if(sunrise.get(Calendar.HOUR_OF_DAY) == cal.get(Calendar.HOUR_OF_DAY) && sunrise
-                .get(Calendar.MINUTE) < cal.get(Calendar.MINUTE))
-        {
+        } else if (sunrise.get(Calendar.HOUR_OF_DAY) == cal.get(Calendar.HOUR_OF_DAY) && sunrise.get(Calendar.MINUTE) < cal.get(Calendar.MINUTE)) {
             isDaytime = true;
-        }
-        else if(sunset.get(Calendar.HOUR_OF_DAY) == cal.get(Calendar.HOUR_OF_DAY) && sunset
-                .get(Calendar.MINUTE) > cal.get(Calendar.MINUTE))
-        {
+        } else if (sunset.get(Calendar.HOUR_OF_DAY) == cal.get(Calendar.HOUR_OF_DAY) && sunset.get(Calendar.MINUTE) > cal.get(Calendar.MINUTE)) {
             isDaytime = true;
-        }
-        else
-        {
+        } else {
             isDaytime = false;
         }
-
         return isDaytime;
     }
 
